@@ -17,7 +17,7 @@ public class PacienteWebController {
     @GetMapping
     public String listar(Model model) {
         model.addAttribute("pacientes", pacienteService.listarPacientes());
-        return "listPacientes"; // vista HTML
+        return "listPacientes";
     }
 
     @GetMapping("/nuevo")

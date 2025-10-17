@@ -1,7 +1,11 @@
 package com.tecsup.eval02.service;
 
-import com.tecsup.eval02.model.daos.*;
-import com.tecsup.eval02.model.entities.*;
+import com.tecsup.eval02.model.daos.AntecedenteRepository;
+import com.tecsup.eval02.model.daos.HistoriaRepository;
+import com.tecsup.eval02.model.daos.PacienteRepository;
+import com.tecsup.eval02.model.entities.AntecedenteMedico;
+import com.tecsup.eval02.model.entities.HistoriaClinica;
+import com.tecsup.eval02.model.entities.Paciente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +26,7 @@ public class PacienteServiceImpl implements PacienteService {
     @Autowired
     private AntecedenteRepository antecedenteRepo;
 
+
     @Override
     @Transactional
     public Paciente crearPaciente(Paciente paciente) {
@@ -30,7 +35,7 @@ public class PacienteServiceImpl implements PacienteService {
         HistoriaClinica historia = new HistoriaClinica();
         historia.setPaciente(p);
         historia.setFechaApertura(LocalDate.now());
-        historia.setObservaciones("Historia creada automáticamente");
+        historia.setObservaciones("Historia clínica inicial creada automáticamente.");
         historiaRepo.save(historia);
 
         return p;
@@ -46,6 +51,7 @@ public class PacienteServiceImpl implements PacienteService {
         Optional<Paciente> opt = pacienteRepo.findById(id);
         return opt.orElse(null);
     }
+
 
     @Override
     @Transactional
@@ -64,29 +70,36 @@ public class PacienteServiceImpl implements PacienteService {
         return pacienteRepo.save(p);
     }
 
+
     @Override
     @Transactional
     public void desactivarPaciente(Long id) {
-        Paciente p = obtenerPaciente(id);
-        if (p != null) {
-            p.setEstado("INACTIVO");
-            pacienteRepo.save(p);
+        Paciente paciente = pacienteRepo.findById(id).orElse(null);
+        if (paciente != null) {
+            paciente.setEstado("INACTIVO");
+            pacienteRepo.save(paciente);
         }
     }
 
+
     @Override
     public List<AntecedenteMedico> listarAntecedentes(Long pacienteId) {
-        HistoriaClinica h = historiaRepo.findByPacienteId(pacienteId);
-        if (h == null) return List.of();
-        return antecedenteRepo.findByHistoriaId(h.getId());
+        List<HistoriaClinica> historias = historiaRepo.findByPacienteId(pacienteId);
+        if (historias.isEmpty()) return List.of();
+
+        HistoriaClinica historia = historias.get(0);
+        return antecedenteRepo.findByHistoriaId(historia.getId());
     }
+
 
     @Override
     @Transactional
     public AntecedenteMedico agregarAntecedente(Long pacienteId, AntecedenteMedico antecedente) {
-        HistoriaClinica h = historiaRepo.findByPacienteId(pacienteId);
-        if (h == null) return null;
-        antecedente.setHistoria(h);
+        List<HistoriaClinica> historias = historiaRepo.findByPacienteId(pacienteId);
+        if (historias.isEmpty()) return null;
+
+        HistoriaClinica historia = historias.get(historias.size() - 1);
+        antecedente.setHistoria(historia);
         return antecedenteRepo.save(antecedente);
     }
 }

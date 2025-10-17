@@ -13,11 +13,12 @@ public class HistoriaClinica {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+    @ManyToOne  // 🔁 antes era OneToOne
     @JoinColumn(name = "id_paciente", nullable = false)
     private Paciente paciente;
 
     private LocalDate fechaApertura;
+
     @Column(columnDefinition = "TEXT")
     private String observaciones;
 

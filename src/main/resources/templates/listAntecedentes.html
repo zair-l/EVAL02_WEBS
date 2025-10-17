@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Listado de Antecedentes Médicos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success fixed-top">
+        <div class="container">
+            <a class="navbar-brand fs-4" th:href="@{/index}" style="color:white;">Clínica Spring Boot</a>
+        </div>
+    </nav>
+</header>
+<br><br>
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Antecedentes Médicos</h2>
+
+    <div class="text-end mb-3">
+        <a th:href="@{/historias}" class="btn btn-secondary">Volver a Historias</a>
+        <a th:href="@{/antecedentes/nuevo}" class="btn btn-success">Nuevo Antecedente</a>
+    </div>
+
+    <table class="table table-striped table-bordered">
+        <thead class="table-success text-center">
+        <tr>
+            <th>ID</th>
+            <th>Historia Clínica</th>
+            <th>Tipo</th>
+            <th>Descripción</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody class="text-center">
+        <tr th:each="a : ${antecedentes}">
+            <td th:text="${a.id}"></td>
+            <td th:text="${a.historia.paciente.nombres + ' ' + a.historia.paciente.apellidos}"></td>
+            <td th:text="${a.tipo}"></td>
+            <td th:text="${a.descripcion}"></td>
+            <td>
+                <a th:href="@{/antecedentes/editar/{id}(id=${a.id})}" class="btn btn-primary btn-sm">Editar</a>
+                <a th:href="@{/antecedentes/eliminar/{id}(id=${a.id})}" class="btn btn-danger btn-sm"
+                   onclick="return confirm('¿Seguro que deseas eliminar este antecedente?')">Eliminar</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
